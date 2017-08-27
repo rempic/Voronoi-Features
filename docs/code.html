@@ -1,0 +1,378 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Classes/Modules &#8212; Voronoi Features 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Tutorial" href="tutorial.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="classes-modules">
+<h1>Classes/Modules<a class="headerlink" href="#classes-modules" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-Voronoi">
+<span id="voronoi"></span><h2>Voronoi<a class="headerlink" href="#module-Voronoi" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="Voronoi.Voronoi">
+<em class="property">class </em><code class="descclassname">Voronoi.</code><code class="descname">Voronoi</code><span class="sig-paren">(</span><em>xypoints</em>, <em>image_width</em>, <em>image_height</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Voronoi.html#Voronoi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Voronoi.Voronoi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Root object from which to create the voronoi diagram</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xypoints</strong> (<em>List of</em><em>  (</em><em>x</em><em>,</em><em>y</em><em>) </em><em>pairs</em>) – [(x,y), …] sets of points from which to build the voronoi diagram</li>
+<li><strong>image_width</strong> (<em>int</em>) – width of the original image from which the points are derived</li>
+<li><strong>image_width</strong> – height of the original image from which the points are derived</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an instance of the object Voronoi</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">object</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">Voronoi_Features</span> <span class="k">as</span> <span class="nn">VF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vor</span> <span class="o">=</span> <span class="n">VF</span><span class="o">.</span><span class="n">Voronoi</span><span class="p">([</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">],</span><span class="mi">1000</span><span class="p">,</span><span class="mi">500</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#VISUALIZE THE VORONOI IMAGE</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">15</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">vor</span><span class="o">.</span><span class="n">get_voronoi_map</span><span class="p">())</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="Voronoi.Voronoi.features">
+<code class="descname">features</code><span class="sig-paren">(</span><em>props_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Voronoi.html#Voronoi.features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Voronoi.Voronoi.features" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure the values of the specified  property/measure name (e.g., ‘area’) for all voronoi regions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>prop_name</strong> (<em>string</em>) – name of the property to measure (e.g, ‘area’)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Feature object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">Voronoi_Features</span> <span class="k">as</span> <span class="nn">VF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">voro</span> <span class="o">=</span> <span class="n">VF</span><span class="o">.</span><span class="n">Images</span><span class="p">(</span><span class="n">folder_name</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">features</span> <span class="o">=</span> <span class="n">voro</span><span class="o">.</span><span class="n">features</span><span class="p">([</span><span class="s1">&#39;area&#39;</span><span class="p">,</span><span class="s1">&#39;perimeter&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">features</span><span class="o">.</span><span class="n">get_data_frame</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The following properties can be accessed as attributes or keys:</p>
+<dl class="docutils">
+<dt><strong>area</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Number of pixels of region.</dd>
+<dt><strong>bbox</strong> <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span></dt>
+<dd>Bounding box <code class="docutils literal"><span class="pre">(min_row,</span> <span class="pre">min_col,</span> <span class="pre">max_row,</span> <span class="pre">max_col)</span></code>.
+Pixels belonging to the bounding box are in the half-open interval
+<code class="docutils literal"><span class="pre">[min_row;</span> <span class="pre">max_row)</span></code> and <code class="docutils literal"><span class="pre">[min_col;</span> <span class="pre">max_col)</span></code>.</dd>
+<dt><strong>bbox_area</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Number of pixels of bounding box.</dd>
+<dt><strong>centroid</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd>Centroid coordinate tuple <code class="docutils literal"><span class="pre">(row,</span> <span class="pre">col)</span></code>.</dd>
+<dt><strong>convex_area</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Number of pixels of convex hull image.</dd>
+<dt><strong>convex_image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(H, J) ndarray</span></dt>
+<dd>Binary convex hull image which has the same size as bounding box.</dd>
+<dt><strong>coords</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(N, 2) ndarray</span></dt>
+<dd>Coordinate list <code class="docutils literal"><span class="pre">(row,</span> <span class="pre">col)</span></code> of the region.</dd>
+<dt><strong>eccentricity</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Eccentricity of the ellipse that has the same second-moments as the
+region. The eccentricity is the ratio of the focal distance
+(distance between focal points) over the major axis length.
+The value is in the interval [0, 1).
+When it is 0, the ellipse becomes a circle.</dd>
+<dt><strong>equivalent_diameter</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>The diameter of a circle with the same area as the region.</dd>
+<dt><strong>euler_number</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Euler characteristic of region. Computed as number of objects (= 1)
+subtracted by number of holes (8-connectivity).</dd>
+<dt><strong>extent</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Ratio of pixels in the region to pixels in the total bounding box.
+Computed as <code class="docutils literal"><span class="pre">area</span> <span class="pre">/</span> <span class="pre">(rows</span> <span class="pre">*</span> <span class="pre">cols)</span></code></dd>
+<dt><strong>filled_area</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Number of pixels of filled region.</dd>
+<dt><strong>filled_image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(H, J) ndarray</span></dt>
+<dd>Binary region image with filled holes which has the same size as
+bounding box.</dd>
+<dt><strong>image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(H, J) ndarray</span></dt>
+<dd>Sliced binary region image which has the same size as bounding box.</dd>
+<dt><strong>inertia_tensor</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(2, 2) ndarray</span></dt>
+<dd>Inertia tensor of the region for the rotation around its mass.</dd>
+<dt><strong>inertia_tensor_eigvals</strong> <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span></dt>
+<dd>The two eigen values of the inertia tensor in decreasing order.</dd>
+<dt><strong>intensity_image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">ndarray</span></dt>
+<dd>Image inside region bounding box.</dd>
+<dt><strong>label</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>The label in the labeled input image.</dd>
+<dt><strong>local_centroid</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd>Centroid coordinate tuple <code class="docutils literal"><span class="pre">(row,</span> <span class="pre">col)</span></code>, relative to region bounding
+box.</dd>
+<dt><strong>major_axis_length</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>The length of the major axis of the ellipse that has the same
+normalized second central moments as the region.</dd>
+<dt><strong>max_intensity</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Value with the greatest intensity in the region.</dd>
+<dt><strong>mean_intensity</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Value with the mean intensity in the region.</dd>
+<dt><strong>min_intensity</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Value with the least intensity in the region.</dd>
+<dt><strong>minor_axis_length</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>The length of the minor axis of the ellipse that has the same
+normalized second central moments as the region.</dd>
+<dt><strong>moments</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(3, 3) ndarray</span></dt>
+<dd><dl class="first docutils">
+<dt>Spatial moments up to 3rd order::</dt>
+<dd>m_ji = sum{ array(x, y) * x^j * y^i }</dd>
+</dl>
+<p class="last">where the sum is over the <cite>x</cite>, <cite>y</cite> coordinates of the region.</p>
+</dd>
+<dt><strong>moments_central</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(3, 3) ndarray</span></dt>
+<dd><dl class="first docutils">
+<dt>Central moments (translation invariant) up to 3rd order::</dt>
+<dd>mu_ji = sum{ array(x, y) * (x - x_c)^j * (y - y_c)^i }</dd>
+</dl>
+<p class="last">where the sum is over the <cite>x</cite>, <cite>y</cite> coordinates of the region,
+and <cite>x_c</cite> and <cite>y_c</cite> are the coordinates of the region’s centroid.</p>
+</dd>
+<dt><strong>moments_hu</strong> <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span></dt>
+<dd>Hu moments (translation, scale and rotation invariant).</dd>
+<dt><strong>moments_normalized</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(3, 3) ndarray</span></dt>
+<dd><dl class="first docutils">
+<dt>Normalized moments (translation and scale invariant) up to 3rd order::</dt>
+<dd>nu_ji = mu_ji / m_00^[(i+j)/2 + 1]</dd>
+</dl>
+<p class="last">where <cite>m_00</cite> is the zeroth spatial moment.</p>
+</dd>
+<dt><strong>orientation</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Angle between the X-axis and the major axis of the ellipse that has
+the same second-moments as the region. Ranging from <cite>-pi/2</cite> to
+<cite>pi/2</cite> in counter-clockwise direction.</dd>
+<dt><strong>perimeter</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Perimeter of object which approximates the contour as a line
+through the centers of border pixels using a 4-connectivity.</dd>
+<dt><strong>solidity</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Ratio of pixels in the region to pixels of the convex hull image.</dd>
+<dt><strong>weighted_centroid</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd>Centroid coordinate tuple <code class="docutils literal"><span class="pre">(row,</span> <span class="pre">col)</span></code> weighted with intensity
+image.</dd>
+<dt><strong>weighted_local_centroid</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd>Centroid coordinate tuple <code class="docutils literal"><span class="pre">(row,</span> <span class="pre">col)</span></code>, relative to region bounding
+box, weighted with intensity image.</dd>
+<dt><strong>weighted_moments</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(3, 3) ndarray</span></dt>
+<dd><dl class="first docutils">
+<dt>Spatial moments of intensity image up to 3rd order::</dt>
+<dd>wm_ji = sum{ array(x, y) * x^j * y^i }</dd>
+</dl>
+<p class="last">where the sum is over the <cite>x</cite>, <cite>y</cite> coordinates of the region.</p>
+</dd>
+<dt><strong>weighted_moments_central</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(3, 3) ndarray</span></dt>
+<dd><p class="first">Central moments (translation invariant) of intensity image up to
+3rd order:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">wmu_ji</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">{</span> <span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_c</span><span class="p">)</span><span class="o">^</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_c</span><span class="p">)</span><span class="o">^</span><span class="n">i</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p class="last">where the sum is over the <cite>x</cite>, <cite>y</cite> coordinates of the region,
+and <cite>x_c</cite> and <cite>y_c</cite> are the coordinates of the region’s weighted
+centroid.</p>
+</dd>
+<dt><strong>weighted_moments_hu</strong> <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span></dt>
+<dd>Hu moments (translation, scale and rotation invariant) of intensity
+image.</dd>
+<dt><strong>weighted_moments_normalized</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(3, 3) ndarray</span></dt>
+<dd><p class="first">Normalized moments (translation and scale invariant) of intensity
+image up to 3rd order:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">wnu_ji</span> <span class="o">=</span> <span class="n">wmu_ji</span> <span class="o">/</span> <span class="n">wm_00</span><span class="o">^</span><span class="p">[(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p class="last">where <code class="docutils literal"><span class="pre">wm_00</span></code> is the zeroth spatial moment (intensity-weighted area).</p>
+</dd>
+</dl>
+<table class="docutils footnote" frame="void" id="id1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><a class="reference external" href="http://scikit-image.org/docs/dev/api/skimage.measure.html#skimage.measure.regionprops">http://scikit-image.org/docs/dev/api/skimage.measure.html#skimage.measure.regionprops</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Voronoi.Voronoi.get_voronoi_map">
+<code class="descname">get_voronoi_map</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Voronoi.html#Voronoi.get_voronoi_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Voronoi.Voronoi.get_voronoi_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the vornoi image in which the region pixels values are all equal to the index of the points array
+used to calculate the voronoi diagram. The voronoi image is used as data strcuture to determine the points index related to a voronoi region</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">voronoi image</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">2d array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-Features">
+<span id="features"></span><h2>Features<a class="headerlink" href="#module-Features" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="Features.Features">
+<em class="property">class </em><code class="descclassname">Features.</code><code class="descname">Features</code><span class="sig-paren">(</span><em>data_frame</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Features.html#Features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Features.Features" title="Permalink to this definition">¶</a></dt>
+<dd><p>contain the dataframe</p>
+<dl class="method">
+<dt id="Features.Features.get_dataframe">
+<code class="descname">get_dataframe</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Features.html#Features.get_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Features.Features.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns  the data frame contining the feature values</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Features.Features.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>storage_name</em>, <em>type_storage='file'</em>, <em>do_append=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Features.html#Features.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Features.Features.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>save the current dataframe into the type of storage given in input.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>storage_name</strong> (<em>string</em>) – storage name, (e.g., file name if ‘ storage type is ‘file’)</li>
+<li><strong>type_storage</strong> (<em>string</em>) – type of storage (default is ‘file’) (‘db’, ‘json’ will be future implementations)</li>
+<li><strong>do_append</strong> (<em>boolean</em>) – if True it appends to existing storage. If False it creates a new storage</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>if  ‘do_append=True’: This version of the method does not check whether the new data are consistent with presisitng data into
+the existing storage. It just tris to append the date and might fail or not depending on the type of storage
+:returns: 1 if sucessuful otherwise 0
+:rtype: int</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">Voronoi_Features</span> <span class="k">as</span> <span class="nn">VF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vor</span> <span class="o">=</span> <span class="n">VF</span><span class="o">.</span><span class="n">Voronoi</span><span class="p">([</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">],</span><span class="mi">1000</span><span class="p">,</span><span class="mi">500</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">features</span> <span class="o">=</span> <span class="n">vor</span><span class="o">.</span><span class="n">features</span><span class="p">([</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">,</span><span class="s1">&#39;perimeter&#39;</span><span class="p">,</span> <span class="s1">&#39;centroid&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">features</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;my_file_name&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Voronoi Features</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Classes/Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-Voronoi">Voronoi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-Features">Features</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="tutorial.html" title="previous chapter">Tutorial</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Remigio Picone.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/code.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

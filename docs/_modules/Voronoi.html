@@ -1,0 +1,363 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Voronoi &#8212; Voronoi Features 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Voronoi</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">scipy.spatial</span> <span class="k">as</span> <span class="nn">SS</span>
+<span class="c1">#from scipy.spatial import Voronoi, voronoi_plot_2d</span>
+<span class="kn">from</span> <span class="nn">skimage.measure</span> <span class="k">import</span> <span class="n">label</span><span class="p">,</span> <span class="n">regionprops</span>
+<span class="kn">from</span> <span class="nn">skimage.draw</span> <span class="k">import</span> <span class="n">ellipse</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span> <span class="n">polygon_perimeter</span>
+
+<span class="kn">from</span> <span class="nn">Voronoi_Features</span> <span class="k">import</span> <span class="n">MyException</span>
+<span class="kn">from</span> <span class="nn">Voronoi_Features</span> <span class="k">import</span> <span class="n">Features</span>
+<span class="kn">from</span> <span class="nn">Voronoi_Features</span> <span class="k">import</span> <span class="n">Utils</span>
+
+<div class="viewcode-block" id="Voronoi"><a class="viewcode-back" href="../code.html#Voronoi.Voronoi">[docs]</a><span class="k">class</span> <span class="nc">Voronoi</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Root object from which to create the voronoi diagram</span>
+
+<span class="sd">    :param  xypoints: [(x,y), ...] sets of points from which to build the voronoi diagram</span>
+<span class="sd">    :type xypoints: List of  (x,y) pairs</span>
+<span class="sd">    :param  image_width: width of the original image from which the points are derived</span>
+<span class="sd">    :type image_width: int</span>
+<span class="sd">    :param  image_width: height of the original image from which the points are derived</span>
+<span class="sd">    :type image_width: int</span>
+<span class="sd">    :returns: an instance of the object Voronoi</span>
+<span class="sd">    :rtype: object</span>
+<span class="sd">    :example:</span>
+<span class="sd">    &gt;&gt;&gt; import Voronoi_Features as VF</span>
+<span class="sd">    &gt;&gt;&gt; vor = VF.Voronoi([X,Y],1000,500)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; #VISUALIZE THE VORONOI IMAGE</span>
+<span class="sd">    &gt;&gt;&gt; fig = plt.figure(figsize=(20,15))</span>
+<span class="sd">    &gt;&gt;&gt; plt.imshow(vor.get_voronoi_map())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># to implement the class as a collection this object inherits the abstract class my_iterator</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xypoints</span><span class="p">,</span> <span class="n">image_width</span><span class="p">,</span> <span class="n">image_height</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__xypoints</span> <span class="o">=</span> <span class="n">xypoints</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__image_width</span> <span class="o">=</span> <span class="n">image_width</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__image_height</span> <span class="o">=</span> <span class="n">image_height</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__VOR</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">__image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">image_height</span><span class="p">,</span> <span class="n">image_width</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__image_voromap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">image_height</span><span class="p">,</span> <span class="n">image_width</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">__make_voronoi</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__make_voro_map</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">MyException</span><span class="o">.</span><span class="n">MyException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Voronoi.get_voronoi_map"><a class="viewcode-back" href="../code.html#Voronoi.Voronoi.get_voronoi_map">[docs]</a>    <span class="k">def</span> <span class="nf">get_voronoi_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the vornoi image in which the region pixels values are all equal to the index of the points array</span>
+<span class="sd">        used to calculate the voronoi diagram. The voronoi image is used as data strcuture to determine the points index related to a voronoi region</span>
+
+<span class="sd">        :return: voronoi image</span>
+<span class="sd">        :rtype: 2d array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__image_voromap</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__make_voronoi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Makes the vornoi image with region pixels values equal to the index for the points array used to build the</span>
+<span class="sd">        voronoi. In this class the voro-image is used as data strcuture to determine the points index refering to</span>
+<span class="sd">        the voro-regions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__VOR</span> <span class="o">=</span> <span class="n">SS</span><span class="o">.</span><span class="n">Voronoi</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__xypoints</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__make_voro_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Makes the vornoi image with region pixels values equal to the index for the points array used to build the</span>
+<span class="sd">        voronoi. In this class the voro-image is used as data strcuture to determine the points index refering to</span>
+<span class="sd">        the voro-regions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__xypoints</span><span class="p">)</span>
+
+        <span class="c1"># loop on all points (centroids) of the single voronoi region</span>
+        <span class="k">for</span> <span class="n">xy_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">n</span><span class="p">):</span>
+            <span class="c1"># gets the index of a voronoi region</span>
+            <span class="n">reg_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__VOR</span><span class="o">.</span><span class="n">point_region</span><span class="p">[</span><span class="n">xy_idx</span><span class="p">]</span>
+            <span class="c1"># gets the voronoi region</span>
+            <span class="n">region</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__VOR</span><span class="o">.</span><span class="n">regions</span><span class="p">[</span><span class="n">reg_idx</span><span class="p">]</span>
+            <span class="c1"># calculates the polygon of the region</span>
+            <span class="n">poly</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__VOR</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">region</span><span class="p">]</span>
+            <span class="c1">#print(&quot;polygon:{}&quot;.format(poly))</span>
+            <span class="c1">#print(&quot;prod:{}&quot;.format(poly.min()))</span>
+            <span class="n">c0</span> <span class="o">=</span> <span class="n">poly</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+            <span class="n">c1</span> <span class="o">=</span> <span class="n">poly</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">c2</span> <span class="o">=</span> <span class="n">poly</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">c0</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">c2</span><span class="o">&lt;</span><span class="bp">self</span><span class="o">.</span><span class="n">__image_width</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">c1</span><span class="o">&lt;</span><span class="bp">self</span><span class="o">.</span><span class="n">__image_height</span><span class="p">):</span>
+                <span class="c1">#  build the x and y vectors of the x and y polygon coordinates</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">poly</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">poly</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+                <span class="c1"># fills with values 1 the pixels of the region polygon on the temporary refering to the entire voronoi diagram</span>
+                <span class="n">rr</span><span class="p">,</span> <span class="n">cc</span> <span class="o">=</span> <span class="n">polygon</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                <span class="n">rrp</span><span class="p">,</span><span class="n">ccp</span> <span class="o">=</span> <span class="n">polygon_perimeter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+                <span class="c1">#print(&quot;rr:{}&quot;.format(rr.max()))</span>
+                <span class="c1">#print(&quot;cc:{}&quot;.format(cc.max()))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__image_voromap</span><span class="p">[</span><span class="n">rr</span><span class="p">,</span> <span class="n">cc</span><span class="p">]</span> <span class="o">=</span> <span class="n">xy_idx</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__image_voromap</span><span class="p">[</span><span class="n">rrp</span><span class="p">,</span> <span class="n">ccp</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__image_voromap</span>
+
+
+<div class="viewcode-block" id="Voronoi.features"><a class="viewcode-back" href="../code.html#Voronoi.Voronoi.features">[docs]</a>    <span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">props_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Measure the values of the specified  property/measure name (e.g., &#39;area&#39;) for all voronoi regions.</span>
+
+<span class="sd">        :param prop_name: name of the property to measure (e.g, &#39;area&#39;)</span>
+<span class="sd">        :type prop_name: string</span>
+<span class="sd">        :returns: Feature object</span>
+<span class="sd">        :rtype: Object</span>
+
+<span class="sd">        :example:</span>
+<span class="sd">        &gt;&gt;&gt; import Voronoi_Features as VF</span>
+<span class="sd">        &gt;&gt;&gt; voro = VF.Images(folder_name)</span>
+<span class="sd">        &gt;&gt;&gt; features = voro.features([&#39;area&#39;,&#39;perimeter&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; features.get_data_frame().head()</span>
+
+<span class="sd">        The following properties can be accessed as attributes or keys:</span>
+
+<span class="sd">        **area** : int</span>
+<span class="sd">            Number of pixels of region.</span>
+<span class="sd">        **bbox** : tuple</span>
+<span class="sd">            Bounding box ``(min_row, min_col, max_row, max_col)``.</span>
+<span class="sd">            Pixels belonging to the bounding box are in the half-open interval</span>
+<span class="sd">            ``[min_row; max_row)`` and ``[min_col; max_col)``.</span>
+<span class="sd">        **bbox_area** : int</span>
+<span class="sd">            Number of pixels of bounding box.</span>
+<span class="sd">        **centroid** : array</span>
+<span class="sd">            Centroid coordinate tuple ``(row, col)``.</span>
+<span class="sd">        **convex_area** : int</span>
+<span class="sd">            Number of pixels of convex hull image.</span>
+<span class="sd">        **convex_image** : (H, J) ndarray</span>
+<span class="sd">            Binary convex hull image which has the same size as bounding box.</span>
+<span class="sd">        **coords** : (N, 2) ndarray</span>
+<span class="sd">            Coordinate list ``(row, col)`` of the region.</span>
+<span class="sd">        **eccentricity** : float</span>
+<span class="sd">            Eccentricity of the ellipse that has the same second-moments as the</span>
+<span class="sd">            region. The eccentricity is the ratio of the focal distance</span>
+<span class="sd">            (distance between focal points) over the major axis length.</span>
+<span class="sd">            The value is in the interval [0, 1).</span>
+<span class="sd">            When it is 0, the ellipse becomes a circle.</span>
+<span class="sd">        **equivalent_diameter** : float</span>
+<span class="sd">            The diameter of a circle with the same area as the region.</span>
+<span class="sd">        **euler_number** : int</span>
+<span class="sd">            Euler characteristic of region. Computed as number of objects (= 1)</span>
+<span class="sd">            subtracted by number of holes (8-connectivity).</span>
+<span class="sd">        **extent** : float</span>
+<span class="sd">            Ratio of pixels in the region to pixels in the total bounding box.</span>
+<span class="sd">            Computed as ``area / (rows * cols)``</span>
+<span class="sd">        **filled_area** : int</span>
+<span class="sd">            Number of pixels of filled region.</span>
+<span class="sd">        **filled_image** : (H, J) ndarray</span>
+<span class="sd">            Binary region image with filled holes which has the same size as</span>
+<span class="sd">            bounding box.</span>
+<span class="sd">        **image** : (H, J) ndarray</span>
+<span class="sd">            Sliced binary region image which has the same size as bounding box.</span>
+<span class="sd">        **inertia_tensor** : (2, 2) ndarray</span>
+<span class="sd">            Inertia tensor of the region for the rotation around its mass.</span>
+<span class="sd">        **inertia_tensor_eigvals** : tuple</span>
+<span class="sd">            The two eigen values of the inertia tensor in decreasing order.</span>
+<span class="sd">        **intensity_image** : ndarray</span>
+<span class="sd">            Image inside region bounding box.</span>
+<span class="sd">        **label** : int</span>
+<span class="sd">            The label in the labeled input image.</span>
+<span class="sd">        **local_centroid** : array</span>
+<span class="sd">            Centroid coordinate tuple ``(row, col)``, relative to region bounding</span>
+<span class="sd">            box.</span>
+<span class="sd">        **major_axis_length** : float</span>
+<span class="sd">            The length of the major axis of the ellipse that has the same</span>
+<span class="sd">            normalized second central moments as the region.</span>
+<span class="sd">        **max_intensity** : float</span>
+<span class="sd">            Value with the greatest intensity in the region.</span>
+<span class="sd">        **mean_intensity** : float</span>
+<span class="sd">            Value with the mean intensity in the region.</span>
+<span class="sd">        **min_intensity** : float</span>
+<span class="sd">            Value with the least intensity in the region.</span>
+<span class="sd">        **minor_axis_length** : float</span>
+<span class="sd">            The length of the minor axis of the ellipse that has the same</span>
+<span class="sd">            normalized second central moments as the region.</span>
+<span class="sd">        **moments** : (3, 3) ndarray</span>
+<span class="sd">            Spatial moments up to 3rd order::</span>
+<span class="sd">                m_ji = sum{ array(x, y) * x^j * y^i }</span>
+<span class="sd">            where the sum is over the `x`, `y` coordinates of the region.</span>
+<span class="sd">        **moments_central** : (3, 3) ndarray</span>
+<span class="sd">            Central moments (translation invariant) up to 3rd order::</span>
+<span class="sd">                mu_ji = sum{ array(x, y) * (x - x_c)^j * (y - y_c)^i }</span>
+<span class="sd">            where the sum is over the `x`, `y` coordinates of the region,</span>
+<span class="sd">            and `x_c` and `y_c` are the coordinates of the region&#39;s centroid.</span>
+<span class="sd">        **moments_hu** : tuple</span>
+<span class="sd">            Hu moments (translation, scale and rotation invariant).</span>
+<span class="sd">        **moments_normalized** : (3, 3) ndarray</span>
+<span class="sd">            Normalized moments (translation and scale invariant) up to 3rd order::</span>
+<span class="sd">                nu_ji = mu_ji / m_00^[(i+j)/2 + 1]</span>
+<span class="sd">            where `m_00` is the zeroth spatial moment.</span>
+<span class="sd">        **orientation** : float</span>
+<span class="sd">            Angle between the X-axis and the major axis of the ellipse that has</span>
+<span class="sd">            the same second-moments as the region. Ranging from `-pi/2` to</span>
+<span class="sd">            `pi/2` in counter-clockwise direction.</span>
+<span class="sd">        **perimeter** : float</span>
+<span class="sd">            Perimeter of object which approximates the contour as a line</span>
+<span class="sd">            through the centers of border pixels using a 4-connectivity.</span>
+<span class="sd">        **solidity** : float</span>
+<span class="sd">            Ratio of pixels in the region to pixels of the convex hull image.</span>
+<span class="sd">        **weighted_centroid** : array</span>
+<span class="sd">            Centroid coordinate tuple ``(row, col)`` weighted with intensity</span>
+<span class="sd">            image.</span>
+<span class="sd">        **weighted_local_centroid** : array</span>
+<span class="sd">            Centroid coordinate tuple ``(row, col)``, relative to region bounding</span>
+<span class="sd">            box, weighted with intensity image.</span>
+<span class="sd">        **weighted_moments** : (3, 3) ndarray</span>
+<span class="sd">            Spatial moments of intensity image up to 3rd order::</span>
+<span class="sd">                wm_ji = sum{ array(x, y) * x^j * y^i }</span>
+<span class="sd">            where the sum is over the `x`, `y` coordinates of the region.</span>
+<span class="sd">        **weighted_moments_central** : (3, 3) ndarray</span>
+<span class="sd">            Central moments (translation invariant) of intensity image up to</span>
+<span class="sd">            3rd order::</span>
+<span class="sd">                wmu_ji = sum{ array(x, y) * (x - x_c)^j * (y - y_c)^i }</span>
+<span class="sd">            where the sum is over the `x`, `y` coordinates of the region,</span>
+<span class="sd">            and `x_c` and `y_c` are the coordinates of the region&#39;s weighted</span>
+<span class="sd">            centroid.</span>
+<span class="sd">        **weighted_moments_hu** : tuple</span>
+<span class="sd">            Hu moments (translation, scale and rotation invariant) of intensity</span>
+<span class="sd">            image.</span>
+<span class="sd">        **weighted_moments_normalized** : (3, 3) ndarray</span>
+<span class="sd">            Normalized moments (translation and scale invariant) of intensity</span>
+<span class="sd">            image up to 3rd order::</span>
+<span class="sd">                wnu_ji = wmu_ji / wm_00^[(i+j)/2 + 1]</span>
+<span class="sd">            where ``wm_00`` is the zeroth spatial moment (intensity-weighted area).</span>
+
+
+<span class="sd">        .. [1] http://scikit-image.org/docs/dev/api/skimage.measure.html#skimage.measure.regionprops</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+            <span class="n">labs</span> <span class="o">=</span> <span class="n">label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__image_voromap</span><span class="p">)</span>
+            <span class="n">region_props</span> <span class="o">=</span> <span class="n">regionprops</span><span class="p">(</span><span class="n">labs</span><span class="p">)</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">props_name</span><span class="p">)</span>
+            <span class="n">num_reg</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">region_props</span><span class="p">)</span>
+
+            <span class="c1"># add the ID by using the __image_voromap</span>
+            <span class="n">IDs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">preg</span> <span class="ow">in</span> <span class="n">region_props</span><span class="p">:</span>
+                <span class="n">centroid</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">preg</span><span class="p">,</span> <span class="s1">&#39;centroid&#39;</span><span class="p">)</span>
+                <span class="n">ID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__image_voromap</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">centroid</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">centroid</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+                <span class="n">IDs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">ID</span><span class="p">))</span>
+            <span class="n">Utils</span><span class="o">.</span><span class="n">insert_values</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="n">df</span><span class="p">,</span><span class="n">IDs</span><span class="p">)</span>
+
+            <span class="c1"># add the prop values</span>
+            <span class="k">for</span> <span class="n">pname</span> <span class="ow">in</span> <span class="n">props_name</span><span class="p">:</span>
+                <span class="n">vals</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">preg</span> <span class="ow">in</span> <span class="n">region_props</span><span class="p">:</span>
+                    <span class="n">vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">preg</span><span class="p">,</span> <span class="n">pname</span><span class="p">))</span>
+                <span class="n">Utils</span><span class="o">.</span><span class="n">insert_values</span><span class="p">(</span><span class="n">pname</span><span class="p">,</span><span class="n">df</span><span class="p">,</span><span class="n">vals</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">Features</span><span class="o">.</span><span class="n">Features</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">MyException</span><span class="o">.</span><span class="n">MyException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Voronoi Features</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code.html">Classes/Modules</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Remigio Picone.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
