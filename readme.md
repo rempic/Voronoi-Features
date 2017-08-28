@@ -4,4 +4,4 @@ This package allows the fast extraction and classification of features from a se
 
 ## Documentation: https://rempic.github.io/Image-Features-Extraction/
 
-## [Tutorial](./tutorial/remi_tutorial_image_features_extraction.ipynb)
+## [Tutorial](./tutorial/Voronoi_Features_Tutorial.ipynb)

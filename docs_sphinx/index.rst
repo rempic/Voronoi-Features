@@ -3,14 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Image Features Extraction
+Voronoi Features Extraction
 ============================
 
-This package allows the fast extraction and classification of Voroni features  from a set of images. Then the resulting
-table can be used as training set for a classification machine learning model
+This package allows the fast extraction of Voroni features  from a set of images and includes 38 type of measurements
+for each single voronoi tassel. The resulting data frame  can be used as training and testing set for  machine learning classifier
 
-The package was originally developed to extract measurements of single cell nuclei from microscopy images
-(see figure below), but it can be used to extract features from any set of images.
+The package can be used for a variety of applications. It was originally used to measure single cell nuclei features from microscopy images
+(see figure below), and for extracting infomation from maps for city density analysis and modelling
 
 .. image:: _static/1.png
    :width: 600px
