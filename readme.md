@@ -1,7 +1,7 @@
 # Voronoi Features Extraction Package
 
 
-## Code documentation: https://rempic.github.io/Voronoi-Features/
+## Package documentation: https://rempic.github.io/Voronoi-Features/
 
 ## [Tutorial](./tutorial/Voronoi_Features_Tutorial.ipynb)
 
