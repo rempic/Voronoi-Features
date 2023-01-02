@@ -57,7 +57,7 @@ class Voronoi(object):
         """
         return self.__image_voromap
 
-    def show_voronoi_plot_2d(self):
+    def show_voronoi_plot_2d(self, ax=None):
         """
         plot the voronoi diagram 
         :return: 0 if successfull
@@ -67,7 +67,7 @@ class Voronoi(object):
             print("[Error] It is not possible to show the voronoi diagram as no voronoi object was found (_VOR=Null)")
             return -1
         
-        voronoi_plot_2d(self._VOR)
+        voronoi_plot_2d(self._VOR, ax=ax)
         
         return 0
     
