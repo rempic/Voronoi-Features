@@ -59,14 +59,12 @@ class Voronoi(object):
 
     def show_voronoi_plot_2d(self):
         """
-        Returns the vornoi image in which the region pixels values are all equal to the index of the points array
-        used to calculate the voronoi diagram. The voronoi image is used as data strcuture to determine the points index related to a voronoi region
-
-        :return: voronoi image
-        :rtype: 2d array
+        plot the voronoi diagram 
+        :return: 0 if successfull
+        :rtype: int
         """
         if self._VOR == None:
-            print("[Error] It is not possible to show the _VOR is Null")
+            print("[Error] It is not possible to show the voronoi diagram as no voronoi object was found (_VOR=Null)")
             return -1
         
         voronoi_plot_2d(self._VOR)
