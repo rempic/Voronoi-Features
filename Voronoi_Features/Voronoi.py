@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 import scipy.spatial as SS
-#from scipy.spatial import Voronoi, voronoi_plot_2d
+from scipy.spatial import voronoi_plot_2d
 from skimage.measure import label, regionprops
 from skimage.draw import ellipse, polygon, polygon_perimeter
 
@@ -36,7 +36,7 @@ class Voronoi(object):
             self.__xypoints = xypoints
             self.__image_width = image_width
             self.__image_height = image_height
-            self.__VOR = None
+            self._VOR = None
 
             self.__image = np.zeros([image_height, image_width])
             self.__image_voromap = np.zeros([image_height, image_width])
@@ -57,14 +57,29 @@ class Voronoi(object):
         """
         return self.__image_voromap
 
+    def show_voronoi_plot_2d(self):
+        """
+        Returns the vornoi image in which the region pixels values are all equal to the index of the points array
+        used to calculate the voronoi diagram. The voronoi image is used as data strcuture to determine the points index related to a voronoi region
 
+        :return: voronoi image
+        :rtype: 2d array
+        """
+        if self._VOR == None:
+            print("[Error] It is not possible to show the _VOR is Null")
+            return -1
+        
+        voronoi_plot_2d(self._VOR)
+        
+        return 0
+    
     def __make_voronoi(self):
         """
         Makes the vornoi image with region pixels values equal to the index for the points array used to build the
         voronoi. In this class the voro-image is used as data strcuture to determine the points index refering to
         the voro-regions
         """
-        self.__VOR = SS.Voronoi(self.__xypoints)
+        self._VOR = SS.Voronoi(self.__xypoints)
 
 
     def __make_voro_map(self):
@@ -78,11 +93,11 @@ class Voronoi(object):
         # loop on all points (centroids) of the single voronoi region
         for xy_idx in range(0,n):
             # gets the index of a voronoi region
-            reg_idx = self.__VOR.point_region[xy_idx]
+            reg_idx = self._VOR.point_region[xy_idx]
             # gets the voronoi region
-            region = self.__VOR.regions[reg_idx]
+            region = self._VOR.regions[reg_idx]
             # calculates the polygon of the region
-            poly = self.__VOR.vertices[region]
+            poly = self._VOR.vertices[region]
             #print("polygon:{}".format(poly))
             #print("prod:{}".format(poly.min()))
             c0 = poly.min()
